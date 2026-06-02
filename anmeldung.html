@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Bingo Anmeldung</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #eef1f8;
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+    display: flex; justify-content: center; align-items: flex-start;
+  }
+  .flyer {
+    background: #fff;
+    max-width: 480px; width: 100%;
+    border-radius: 20px; overflow: hidden;
+    box-shadow: 0 8px 40px rgba(10,31,75,0.13);
+  }
+
+  /* Header */
+  .flyer-header {
+    background: #0a1f4b;
+    padding: 28px 24px 24px;
+    position: relative; overflow: hidden;
+  }
+  .flyer-header::before {
+    content: ''; position: absolute;
+    top: -50px; right: -50px;
+    width: 160px; height: 160px;
+    border-radius: 50%; background: #1e3f8a;
+  }
+  .flyer-header::after {
+    content: ''; position: absolute;
+    bottom: -35px; left: 24px;
+    width: 110px; height: 110px;
+    border-radius: 50%; background: #2ecc7a; opacity: 0.65;
+  }
+  .logo { display: flex; align-items: center; gap: 7px; margin-bottom: 14px; position: relative; z-index: 1; }
+  .logo svg { width: 20px; height: 20px; }
+  .logo-text { color: #fff; font-size: 14px; font-weight: 800; letter-spacing: 0.4px; }
+  .flyer-title { color: #fff; font-size: 30px; font-weight: 900; line-height: 1.1; position: relative; z-index: 1; }
+  .flyer-subtitle { color: rgba(255,255,255,0.65); font-size: 13px; font-weight: 700; margin-top: 6px; position: relative; z-index: 1; }
+
+  /* Body */
+  .flyer-body { padding: 20px 18px 8px; }
+
+  .section-title {
+    font-size: 11px; font-weight: 900;
+    color: #1e3f8a;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    margin-bottom: 8px;
+  }
+
+  .field-block { margin-bottom: 16px; }
+
+  label { display: block; font-size: 13px; font-weight: 700; color: #333; margin-bottom: 5px; }
+
+  input[type="text"], input[type="number"], textarea {
+    width: 100%;
+    background: #eef3ff;
+    border: 1.5px solid #d8e2f5;
+    border-radius: 10px;
+    color: #0a1f4b;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 10px 12px;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  input[type="text"]:focus, input[type="number"]:focus, textarea:focus { border-color: #1e3f8a; }
+  input[type="number"] { -moz-appearance: textfield; }
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  textarea { resize: none; min-height: 68px; line-height: 1.5; }
+
+  .range-wrap { display: flex; align-items: center; gap: 10px; }
+  .range-wrap input[type="number"] { width: 72px; text-align: center; font-size: 1.3rem; font-weight: 900; color: #0a1f4b; flex-shrink: 0; }
+  .range-hint { font-size: 12.5px; color: #666; line-height: 1.5; font-weight: 600; }
+
+  .divider { height: 1px; background: #e8ecf5; margin: 18px 0; }
+
+  /* Tip toggles */
+  .tips-toggle { display: flex; gap: 8px; margin-bottom: 12px; }
+  .tip-btn {
+    flex: 1;
+    background: #eef3ff;
+    border: 1.5px solid #d8e2f5;
+    border-radius: 10px;
+    color: #888;
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px; font-weight: 800;
+    padding: 9px 4px;
+    cursor: pointer; text-align: center;
+    transition: all 0.2s;
+  }
+  .tip-btn.active {
+    background: #0a1f4b;
+    border-color: #0a1f4b;
+    color: #fff;
+  }
+
+  .tip-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+  .tip-badge {
+    font-size: 11px; font-weight: 800;
+    border-radius: 99px; padding: 2px 9px;
+  }
+  .tip-badge.free { background: #d4f5e5; color: #1ab368; }
+  .tip-badge.extra { background: #e4efff; color: #1e3f8a; }
+
+  .tip-field { margin-top: 10px; }
+  .tip-field + .tip-field { margin-top: 8px; }
+
+  /* Cost box */
+  .cost-box {
+    background: #eef3ff;
+    border: 1.5px solid #d8e2f5;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+  .cost-row {
+    display: flex; justify-content: space-between;
+    font-size: 13px; font-weight: 700; color: #666;
+    padding: 4px 0;
+  }
+  .cost-row.total {
+    border-top: 1px solid #d8e2f5;
+    margin-top: 6px; padding-top: 10px;
+    font-size: 15px; font-weight: 900; color: #0a1f4b;
+  }
+  .cost-row.total span:last-child { color: #1ab368; }
+
+  .highlight-box {
+    background: #e4efff; border-radius: 10px; padding: 10px 13px; margin-top: 8px;
+  }
+  .highlight-box p { font-size: 12.5px; font-weight: 700; color: #1e3f8a; line-height: 1.5; }
+  .highlight-box strong { color: #1ab368; }
+
+  .error-msg { color: #e05252; font-size: 12px; font-weight: 700; margin-top: 4px; display: none; }
+  .error-msg.show { display: block; }
+
+  /* Submit */
+  .submit-btn {
+    width: 100%;
+    background: #0a1f4b;
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900; font-size: 15px;
+    border: none; border-radius: 12px;
+    padding: 14px; cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    margin-bottom: 4px;
+  }
+  .submit-btn:active { transform: scale(0.97); opacity: 0.9; }
+  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Footer */
+  .footer { text-align: center; padding: 12px 0 22px; }
+  .footer p { font-size: 14px; font-weight: 800; color: #0a1f4b; }
+
+  /* Success */
+  .success { display: none; text-align: center; padding: 3rem 1.5rem; }
+  .success.show { display: block; }
+  .success-icon { font-size: 3.5rem; margin-bottom: 1rem; }
+  .success h2 { font-size: 22px; font-weight: 900; color: #0a1f4b; margin-bottom: 8px; }
+  .success p { color: #555; font-size: 14px; font-weight: 600; line-height: 1.6; }
+  .success .amount { color: #1ab368; font-size: 16px; font-weight: 900; }
+</style>
+</head>
+<body>
+<div class="flyer">
+  <div class="flyer-header">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" stroke="#fff" stroke-width="2"/>
+        <path d="M9 22V12h6v10" stroke="#fff" stroke-width="2"/>
+      </svg>
+      <span class="logo-text">netTrek</span>
+    </div>
+    <h1 class="flyer-title">Urlaubs-Bingo</h1>
+    <p class="flyer-subtitle">Anmeldung & Wetteinsatz</p>
+  </div>
+
+  <div id="formWrap">
+    <div class="flyer-body">
+
+      <!-- Name -->
+      <div class="field-block">
+        <div class="section-title">Dein Name</div>
+        <input type="text" id="nameInput" placeholder="Vorname" autocomplete="off">
+        <div class="error-msg" id="nameError">Bitte gib deinen Namen ein.</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Schätzung -->
+      <div class="field-block">
+        <div class="section-title">Deine Schätzung</div>
+        <label>Wie viele der 30 Ereignisse treffen ein?</label>
+        <div class="range-wrap">
+          <input type="number" id="guessInput" min="0" max="30" placeholder="0">
+          <div class="range-hint">Zahl zwischen <strong>0</strong> und <strong>30</strong>.<br>Wer am nächsten dran ist, gewinnt.</div>
+        </div>
+        <div class="error-msg" id="guessError">Bitte eine Zahl zwischen 0 und 30 eingeben.</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Tipps -->
+      <div class="field-block">
+        <div class="section-title">Tipps</div>
+
+        <div class="tip-field">
+          <div class="tip-label-row">
+            <label style="margin:0">Gratis-Tipp</label>
+            <span class="tip-badge free">kostenlos · ±1</span>
+          </div>
+          <textarea id="tip0" placeholder="Welches Ereignis glaubst du, steht auf der Liste?" rows="2"></textarea>
+          <div class="error-msg" id="tip0Error">Bitte deinen Gratis-Tipp eintragen.</div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <label>Zusatz-Tipps kaufen (je 2 €, max. 2)</label>
+          <div class="tips-toggle">
+            <div class="tip-btn" id="tipBtn1" onclick="toggleTip(1)">+ 1 Tipp · 2 €</div>
+            <div class="tip-btn" id="tipBtn2" onclick="toggleTip(2)">+ 2 Tipps · 4 €</div>
+          </div>
+
+          <div id="extraTip1" style="display:none">
+            <div class="tip-field">
+              <div class="tip-label-row">
+                <label style="margin:0">Zusatz-Tipp 1</label>
+                <span class="tip-badge extra">2 € · ±1</span>
+              </div>
+              <textarea id="tip1" placeholder="Konkretes Ereignis nennen…" rows="2"></textarea>
+              <div class="error-msg" id="tip1Error">Bitte Tipp eintragen oder Zusatz-Tipp abwählen.</div>
+            </div>
+          </div>
+
+          <div id="extraTip2" style="display:none">
+            <div class="tip-field" style="margin-top:8px">
+              <div class="tip-label-row">
+                <label style="margin:0">Zusatz-Tipp 2</label>
+                <span class="tip-badge extra">2 € · ±1</span>
+              </div>
+              <textarea id="tip2" placeholder="Konkretes Ereignis nennen…" rows="2"></textarea>
+              <div class="error-msg" id="tip2Error">Bitte Tipp eintragen oder Zusatz-Tipp abwählen.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Kosten -->
+      <div class="cost-box">
+        <div class="cost-row"><span>Grundeinsatz</span><span>1 €</span></div>
+        <div class="cost-row" id="extraCostRow" style="display:none">
+          <span id="extraCostLabel">Zusatz-Tipps</span><span id="extraCostVal">0 €</span>
+        </div>
+        <div class="cost-row total"><span>Gesamteinsatz</span><span id="totalCost">1 €</span></div>
+      </div>
+
+      <div class="highlight-box" id="bonusInfo" style="margin-bottom:16px">
+        <p>Gratis-Tipp aktiv: Bei richtigem Tipp gilt deine Schätzung auch mit <strong>±1 Abweichung</strong>.</p>
+      </div>
+
+      <button class="submit-btn" id="submitBtn" onclick="submitForm()">Jetzt anmelden →</button>
+    </div>
+
+    <div class="footer"><p>Viel Spaß im Urlaub! 🌴</p></div>
+  </div>
+
+  <!-- Success -->
+  <div class="success" id="successScreen">
+    <div class="success-icon">🎉</div>
+    <h2>Du bist dabei!</h2>
+    <p>Viel Glück beim Urlaubs-Bingo.<br>Dein Einsatz: <span class="amount" id="successAmount"></span></p>
+    <div style="margin-top:24px;font-size:22px;">🌴</div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyD5G6TLY11N-LS7nplG7jyBLC1WZjTQDOc",
+  authDomain: "nettrek-urlaubs-bingo-2026.firebaseapp.com",
+  databaseURL: "https://nettrek-urlaubs-bingo-2026-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "nettrek-urlaubs-bingo-2026",
+  storageBucket: "nettrek-urlaubs-bingo-2026.firebasestorage.app",
+  messagingSenderId: "850797988248",
+  appId: "1:850797988248:web:72efad3bb12790a1d783ed"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let extraTips = 0;
+
+function toggleTip(n) {
+  extraTips = extraTips === n ? 0 : n;
+  document.getElementById('tipBtn1').classList.toggle('active', extraTips >= 1);
+  document.getElementById('tipBtn2').classList.toggle('active', extraTips === 2);
+  document.getElementById('extraTip1').style.display = extraTips >= 1 ? 'block' : 'none';
+  document.getElementById('extraTip2').style.display = extraTips === 2 ? 'block' : 'none';
+  updateCost();
+}
+
+function updateCost() {
+  const extra = extraTips * 2;
+  const total = 1 + extra;
+  const extraRow = document.getElementById('extraCostRow');
+  if (extra > 0) {
+    extraRow.style.display = 'flex';
+    document.getElementById('extraCostLabel').textContent = `${extraTips} Zusatz-Tipp${extraTips > 1 ? 's' : ''}`;
+    document.getElementById('extraCostVal').textContent = `${extra} €`;
+  } else {
+    extraRow.style.display = 'none';
+  }
+  document.getElementById('totalCost').textContent = `${total} €`;
+  const range = 1 + extraTips;
+  const guess = parseInt(document.getElementById('guessInput').value);
+  const low = isNaN(guess) ? '?' : Math.max(0, guess - range);
+  const high = isNaN(guess) ? '?' : Math.min(30, guess + range);
+  document.getElementById('bonusInfo').innerHTML =
+    `<p>Gewinnbereich bei allen ${1 + extraTips} Tipp${extraTips !== 0 ? 's' : ''} richtig: <strong>${low} bis ${high} Ereignisse</strong></p>`;
+}
+
+document.getElementById('guessInput').addEventListener('input', updateCost);
+
+function showError(id, show) { document.getElementById(id).classList.toggle('show', show); }
+
+function submitForm() {
+  let valid = true;
+  const name = document.getElementById('nameInput').value.trim();
+  if (!name) { showError('nameError', true); valid = false; } else showError('nameError', false);
+  const guess = parseInt(document.getElementById('guessInput').value);
+  if (isNaN(guess) || guess < 0 || guess > 30) { showError('guessError', true); valid = false; } else showError('guessError', false);
+  const tip0 = document.getElementById('tip0').value.trim();
+  if (!tip0) { showError('tip0Error', true); valid = false; } else showError('tip0Error', false);
+  let tip1 = '', tip2 = '';
+  if (extraTips >= 1) { tip1 = document.getElementById('tip1').value.trim(); if (!tip1) { showError('tip1Error', true); valid = false; } else showError('tip1Error', false); }
+  if (extraTips === 2) { tip2 = document.getElementById('tip2').value.trim(); if (!tip2) { showError('tip2Error', true); valid = false; } else showError('tip2Error', false); }
+  if (!valid) return;
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true; btn.textContent = 'Wird gespeichert…';
+  const total = 1 + extraTips * 2;
+  const entry = { name, guess, tip0, tip1: tip1||null, tip2: tip2||null, extraTips, totalPaid: total, timestamp: Date.now() };
+  const key = name.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now();
+  db.ref('teilnehmer/' + key).set(entry)
+    .then(() => {
+      document.getElementById('formWrap').style.display = 'none';
+      document.getElementById('successAmount').textContent = total + ' €';
+      document.getElementById('successScreen').classList.add('show');
+    })
+    .catch(() => { btn.disabled = false; btn.textContent = 'Jetzt anmelden →'; alert('Fehler. Bitte nochmal versuchen.'); });
+}
+</script>
+</body>
+</html>
